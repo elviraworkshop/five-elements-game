@@ -1,72 +1,96 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>五行歸類遊戲</title>
 <style>
-  body {
-    font-family: "Noto Serif TC", serif;
-    text-align: center;
-    background-color: #fdf6ec;
-    margin: 0;
-    padding: 0;
-    font-size: 20px;
-  }
-  .page { display: none; padding: 20px; }
-  .active { display: block; }
-  h1 { color: #b22222; font-size: 2.2em; }
-  h2 { font-size: 1.8em; color: #8b1a1a; }
-  p { font-size: 1.2em; }
-  button {
-    background: #b22222;
-    color: #fff;
-    border: none;
-    padding: 12px 30px;
-    font-size: 1.1em;
-    border-radius: 8px;
-    cursor: pointer;
-    margin-top: 15px;
-  }
-  button:hover { background: #8b1a1a; }
-  #dropBox {
-    width: 80%;
-    margin: 20px auto;
-    min-height: 150px;
-    border: 3px dashed #b22222;
-    border-radius: 10px;
-    background: rgba(255,255,255,0.9);
-    padding: 15px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    font-size: 1.1em;
-  }
-  .answer {
-    display: inline-block;
-    padding: 10px 16px;
-    margin: 8px;
-    background-color: #e0d4b7;
-    border-radius: 8px;
-    cursor: grab;
-    user-select: none;
-    transition: background .3s, transform .3s;
-    font-size: 1.1em;
-  }
-  .answer.dragging { opacity: 0.5; }
-  .answer.correct { background-color: #6fc36f !important; color: #fff; }
-  .answer.wrong { background-color: #e45b5b !important; color:#fff; }
-  #answersArea {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    margin: 10px auto;
-    max-width: 600px;
-  }
-  #scoreValue {
-    font-size: 2em;
-    color: #b22222;
-  }
+body {
+  font-family: "Noto Serif TC", serif;
+  text-align: center;
+  background-color: #faf3e0;
+  margin: 0;
+  padding: 0;
+  font-size: 20px;
+}
+.page { display: none; padding: 20px; }
+.active { display: block; }
+h1 { color: #b22222; font-size: 2.2em; }
+h2 { font-size: 1.8em; color: #8b1a1a; margin-bottom:0; }
+p { font-size: 1.1em; }
+button {
+  background: #b22222;
+  color: #fff;
+  border: none;
+  padding: 10px 25px;
+  font-size: 1.1em;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 15px;
+}
+img {
+  max-width: 90%;
+  height: auto;
+  border-radius: 10px;
+  margin: 20px auto;
+  display: block;
+}
+button:hover { background: #8b1a1a; }
+img {
+  max-width: 90%;
+  height: auto;
+  border-radius: 10px;
+  margin: 20px auto;
+  display: block;
+}
+#dropBox {
+  width: 85%;
+  margin: 15px auto;
+  min-height: 150px;
+  border: 3px dashed #b22222;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.9);
+  padding: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items:center;
+}
+.answer {
+  display: inline-block;
+  padding: 10px 16px;
+  margin: 8px;
+  background-color: #e0d4b7;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  transition: background .3s, transform .3s;
+  font-size: 1.1em;
+}
+.answer.correct {
+  background-color: #6fc36f !important;
+  color: #fff;
+}
+.answer.wrong {
+  background-color: #e45b5b !important;
+  color: #fff;
+}
+.answer.disabled {
+  pointer-events: none;
+  opacity: 0.7;
+}
+#answersArea {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 10px auto;
+  max-width: 800px;
+}
+#scoreValue, #accuracyFinal { 
+  font-size: 1.3em; 
+  color: #b22222;
+  margin-top: 10px;
+}
 </style>
 </head>
 <body>
@@ -74,17 +98,15 @@
 <!-- 🏠 Start Page -->
 <div id="start" class="page active">
   <h1>五行歸類遊戲</h1>
-  <img src="image1" alt="封面圖片" style="width:80%;max-width:300px;border-radius:10px;">
-  <p>請根據題目，將正確答案拖曳至框中。<br>
-  點擊框內答案可移除，移除後答案會回到下方。</p>
+  <img id="img1" src="img1" alt="五行封面圖片">
   <button id="startBtn">開始遊戲</button>
 </div>
 
 <!-- 🎯 Game Page -->
 <div id="game" class="page">
   <h2 id="questionTitle">題目：</h2>
-  <p style="color:#555;font-size:1em;">💡 提示：拖曳答案進框內；點擊框內項目可移除</p>
-  <div id="dropBox">拖曳正確答案到這裡</div>
+  <p style="color:#555;">💡 點選答案將其移入框內，再點一次可移除</p>
+  <div id="dropBox">請點選答案放入此框</div>
   <div id="answersArea"></div>
   <button id="confirmBtn">確定</button>
 </div>
@@ -92,196 +114,194 @@
 <!-- 🏁 Score Page -->
 <div id="score" class="page">
   <h2>遊戲結束！</h2>
-  <p>你的總得分：</p>
-  <div id="scoreValue">0</div>
+  <p id="scoreValue"></p>
+  <p id="accuracyFinal"></p>
   <button id="restartBtn">重新開始</button>
 </div>
 
 <script>
-// === 題庫 ===
+// === 題庫 (60題) ===
 const questionBank = [
-  { q:"五行包括？", a:["木","火","土","金","水"] },
-  { q:"情志包括？", a:["恕","善","思","悲","恐"] },
-  { q:"五華包括？", a:["爪","面","唇","毛","髮"] },
-  { q:"五主包括？", a:["筋","脈","肉","皮","骨"] },
-  { q:"五官包括？", a:["目","舌","口","鼻","耳"] },
-  { q:"五腑包括？", a:["膽","小腸","胃","大腸","膀胱"] },
-  { q:"五臟包括？", a:["肝","心","脾","肺","腎"] },
-  { q:"五季包括？", a:["春","夏","長夏","秋","冬"] },
-  { q:"五色包括？", a:["青","赤","黄","白","黑"] },
-  { q:"五味包括？", a:["酸","苦","甘","辛","鹹"] },
-  { q:"與「酸」對應？", a:["青","春","木","肝","膽","目","筋","爪","怒"] },
-  { q:"與「苦」對應？", a:["赤","夏","火","心","小腸","舌","脈","面","喜"] },
-  { q:"與「甘」對應？", a:["黄","長夏","土","脾","胃","口","肉","唇","思"] },
-  { q:"與「辛」對應？", a:["白","秋","金","肺","大腸","鼻","皮","毛","悲"] },
-  { q:"與「鹹」對應？", a:["黑","冬","水","腎","膀胱","耳","骨","髮","恐"] },
-  { q:"與「青」對應？", a:["酸","春","木","肝","膽","目","筋","爪","怒"] },
-  { q:"與「赤」對應？", a:["苦","夏","火","心","小腸","舌","脈","面","喜"] },
-  { q:"與「黄」對應？", a:["甘","長夏","土","脾","胃","口","肉","唇","思"] },
-  { q:"與「白」對應？", a:["辛","秋","金","肺","大腸","鼻","皮","毛","悲"] },
-  { q:"與「黑」對應？", a:["鹹","冬","水","腎","膀胱","耳","骨","髮","恐"] },
-  { q:"與「春」對應？", a:["酸","青","木","肝","膽","目","筋","爪","怒"] },
-  { q:"與「夏」對應？", a:["苦","赤","火","心","小腸","舌","脈","面","喜"] },
-  { q:"與「長夏」對應？", a:["甘","黄","土","脾","胃","口","肉","唇","思"] },
-  { q:"與「秋」對應？", a:["辛","白","金","肺","大腸","鼻","皮","毛","悲"] },
-  { q:"與「冬」對應？", a:["鹹","黑","水","腎","膀胱","耳","骨","髮","恐"] },
-  { q:"與「木」對應？", a:["酸","青","春","肝","膽","目","筋","爪","怒"] },
-  { q:"與「火」對應？", a:["苦","赤","夏","心","小腸","舌","脈","面","喜"] },
-  { q:"與「土」對應？", a:["甘","黄","長夏","脾","胃","口","肉","唇","思"] },
-  { q:"與「金」對應？", a:["辛","白","秋","肺","大腸","鼻","皮","毛","悲"] },
-  { q:"與「水」對應？", a:["鹹","黑","冬","腎","膀胱","耳","骨","髮","恐"] },
-  { q:"與「肝」對應？", a:["酸","青","春","木","膽","目","筋","爪","怒"] },
-  { q:"與「心」對應？", a:["苦","赤","夏","火","小腸","舌","脈","面","喜"] },
-  { q:"與「脾」對應？", a:["甘","黄","長夏","土","胃","口","肉","唇","思"] },
-  { q:"與「肺」對應？", a:["辛","白","秋","金","大腸","鼻","皮","毛","悲"] },
-  { q:"與「腎」對應？", a:["鹹","黑","冬","水","膀胱","耳","骨","髮","恐"] },
-  { q:"與「膽」對應？", a:["酸","青","春","木","肝","目","筋","爪","怒"] },
-  { q:"與「小腸」對應？", a:["苦","赤","夏","火","心","舌","脈","面","喜"] },
-  { q:"與「胃」對應？", a:["甘","黄","長夏","土","脾","口","肉","唇","思"] },
-  { q:"與「大腸」對應？", a:["辛","白","秋","金","肺","鼻","皮","毛","悲"] },
-  { q:"與「膀胱」對應？", a:["鹹","黑","冬","水","腎","耳","骨","髮","恐"] },
-  { q:"與「目」對應？", a:["酸","青","春","木","肝","膽","筋","爪","怒"] },
-  { q:"與「舌」對應？", a:["苦","赤","夏","火","心","小腸","脈","面","喜"] },
-  { q:"與「口」對應？", a:["甘","黄","長夏","土","脾","胃","肉","唇","思"] },
-  { q:"與「鼻」對應？", a:["辛","白","秋","金","肺","大腸","皮","毛","悲"] },
-  { q:"與「耳」對應？", a:["鹹","黑","冬","水","腎","膀胱","骨","髮","恐"] },
-  { q:"與「筋」對應？", a:["酸","青","春","木","肝","膽","目","爪","怒"] },
-  { q:"與「脈」對應？", a:["苦","赤","夏","火","心","小腸","舌","面","喜"] },
-  { q:"與「肉」對應？", a:["甘","黄","長夏","土","脾","胃","口","唇","思"] },
-  { q:"與「皮」對應？", a:["辛","白","秋","金","肺","大腸","鼻","毛","悲"] },
-  { q:"與「骨」對應？", a:["鹹","黑","冬","水","腎","膀胱","耳","髮","恐"] },
-  { q:"與「爪」對應？", a:["酸","青","春","木","肝","膽","目","筋","怒"] },
-  { q:"與「面」對應？", a:["苦","赤","夏","火","心","小腸","舌","脈","喜"] },
-  { q:"與「唇」對應？", a:["甘","黄","長夏","土","脾","胃","口","肉","思"] },
-  { q:"與「毛」對應？", a:["辛","白","秋","金","肺","大腸","鼻","皮","悲"] },
-  { q:"與「髮」對應？", a:["鹹","黑","冬","水","腎","膀胱","耳","骨","恐"] },
-  { q:"與「怒」對應？", a:["酸","青","春","木","肝","膽","目","筋","爪"] },
-  { q:"與「喜」對應？", a:["苦","赤","夏","火","心","小腸","舌","脈","面"] },
-  { q:"與「思」對應？", a:["甘","黄","長夏","土","脾","胃","口","肉","唇"] },
-  { q:"與「悲」對應？", a:["辛","白","秋","金","肺","大腸","鼻","皮","毛"] },
-  { q:"與「恐」對應？", a:["鹹","黑","冬","水","腎","膀胱","耳","骨","髮"] }
+{q:"五行包括？",a:["木","火","土","金","水"]},
+{q:"情志包括？",a:["恕","善","思","悲","恐"]},
+{q:"五華包括？",a:["爪","面","唇","毛","髮"]},
+{q:"五主包括？",a:["筋","脈","肉","皮","骨"]},
+{q:"五官包括？",a:["目","舌","口","鼻","耳"]},
+{q:"五腑包括？",a:["膽","小腸","胃","大腸","膀胱"]},
+{q:"五臟包括？",a:["肝","心","脾","肺","腎"]},
+{q:"五季包括？",a:["春","夏","長夏","秋","冬"]},
+{q:"五色包括？",a:["青","赤","黄","白","黑"]},
+{q:"五味包括？",a:["酸","苦","甘","辛","鹹"]},
+{q:"與「酸」對應？",a:["青","春","木","肝","膽","目","筋","爪","怒"]},
+{q:"與「苦」對應？",a:["赤","夏","火","心","小腸","舌","脈","面","喜"]},
+{q:"與「甘」對應？",a:["黄","長夏","土","脾","胃","口","肉","唇","思"]},
+{q:"與「辛」對應？",a:["白","秋","金","肺","大腸","鼻","皮","毛","悲"]},
+{q:"與「鹹」對應？",a:["黑","冬","水","腎","膀胱","耳","骨","髮","恐"]},
+{q:"與「青」對應？",a:["酸","春","木","肝","膽","目","筋","爪","怒"]},
+{q:"與「赤」對應？",a:["苦","夏","火","心","小腸","舌","脈","面","喜"]},
+{q:"與「黄」對應？",a:["甘","長夏","土","脾","胃","口","肉","唇","思"]},
+{q:"與「白」對應？",a:["辛","秋","金","肺","大腸","鼻","皮","毛","悲"]},
+{q:"與「黑」對應？",a:["鹹","冬","水","腎","膀胱","耳","骨","髮","恐"]},
+{q:"與「春」對應？",a:["酸","青","木","肝","膽","目","筋","爪","怒"]},
+{q:"與「夏」對應？",a:["苦","赤","夏","火","心","小腸","舌","脈","面","喜"]},
+{q:"與「長夏」對應？",a:["甘","黄","土","脾","胃","口","肉","唇","思"]},
+{q:"與「秋」對應？",a:["辛","白","金","肺","大腸","鼻","皮","毛","悲"]},
+{q:"與「冬」對應？",a:["鹹","黑","水","腎","膀胱","耳","骨","髮","恐"]},
+{q:"與「木」對應？",a:["酸","青","春","肝","膽","目","筋","爪","怒"]},
+{q:"與「火」對應？",a:["苦","赤","夏","心","小腸","舌","脈","面","喜"]},
+{q:"與「土」對應？",a:["甘","黄","長夏","脾","胃","口","肉","唇","思"]},
+{q:"與「金」對應？",a:["辛","白","秋","肺","大腸","鼻","皮","毛","悲"]},
+{q:"與「水」對應？",a:["鹹","黑","冬","腎","膀胱","耳","骨","髮","恐"]},
+{q:"與「肝」對應？",a:["酸","青","春","木","膽","目","筋","爪","怒"]},
+{q:"與「心」對應？",a:["苦","赤","夏","火","小腸","舌","脈","面","喜"]},
+{q:"與「脾」對應？",a:["甘","黄","長夏","土","胃","口","肉","唇","思"]},
+{q:"與「肺」對應？",a:["辛","白","秋","金","大腸","鼻","皮","毛","悲"]},
+{q:"與「腎」對應？",a:["鹹","黑","冬","水","膀胱","耳","骨","髮","恐"]},
+{q:"與「膽」對應？",a:["酸","青","春","木","肝","目","筋","爪","怒"]},
+{q:"與「小腸」對應？",a:["苦","赤","夏","火","心","舌","脈","面","喜"]},
+{q:"與「胃」對應？",a:["甘","黄","長夏","土","脾","口","肉","唇","思"]},
+{q:"與「大腸」對應？",a:["辛","白","秋","金","肺","鼻","皮","毛","悲"]},
+{q:"與「膀胱」對應？",a:["鹹","黑","冬","水","腎","耳","骨","髮","恐"]},
+{q:"與「目」對應？",a:["酸","青","春","木","肝","膽","筋","爪","怒"]},
+{q:"與「舌」對應？",a:["苦","赤","夏","火","心","小腸","脈","面","喜"]},
+{q:"與「口」對應？",a:["甘","黄","長夏","土","脾","胃","肉","唇","思"]},
+{q:"與「鼻」對應？",a:["辛","白","秋","金","肺","大腸","皮","毛","悲"]},
+{q:"與「耳」對應？",a:["鹹","黑","冬","水","腎","膀胱","骨","髮","恐"]},
+{q:"與「筋」對應？",a:["酸","青","春","木","肝","膽","目","爪","怒"]},
+{q:"與「脈」對應？",a:["苦","赤","夏","火","心","小腸","舌","面","喜"]},
+{q:"與「肉」對應？",a:["甘","黄","長夏","土","脾","胃","口","唇","思"]},
+{q:"與「皮」對應？",a:["辛","白","秋","金","肺","大腸","鼻","毛","悲"]},
+{q:"與「骨」對應？",a:["鹹","黑","冬","水","腎","膀胱","耳","髮","恐"]},
+{q:"與「爪」對應？",a:["酸","青","春","木","肝","膽","目","筋","怒"]},
+{q:"與「面」對應？",a:["苦","赤","夏","火","心","小腸","舌","脈","喜"]},
+{q:"與「唇」對應？",a:["甘","黄","長夏","土","脾","胃","口","肉","思"]},
+{q:"與「毛」對應？",a:["辛","白","秋","金","肺","大腸","鼻","皮","悲"]},
+{q:"與「髮」對應？",a:["鹹","黑","冬","水","腎","膀胱","耳","骨","恐"]},
+{q:"與「怒」對應？",a:["酸","青","春","木","肝","膽","目","筋","爪"]},
+{q:"與「喜」對應？",a:["苦","赤","夏","火","心","小腸","舌","脈","面"]},
+{q:"與「思」對應？",a:["甘","黄","長夏","土","脾","胃","口","肉","唇"]},
+{q:"與「悲」對應？",a:["辛","白","秋","金","肺","大腸","鼻","皮","毛"]},
+{q:"與「恐」對應？",a:["鹹","黑","冬","水","腎","膀胱","耳","骨","髮"]}
 ];
 
 // === 狀態 ===
-let currentQuestions = [];
-let currentIndex = 0;
-let score = 0;
+let currentQuestions=[];
+let currentIndex=0;
+let correctCount=0;
+let totalAnswers=0;
 
-// === 隨機選題 ===
-function getRandomQuestions() {
-  const shuffled = [...questionBank].sort(()=>Math.random()-0.5);
-  return shuffled.slice(0,5);
-}
-
-// === 顯示頁面 ===
+// === 顯示控制 ===
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-// === 載入題目 ===
+function getRandomQuestions(){
+  return [...questionBank].sort(()=>Math.random()-0.5).slice(0,5);
+}
+
 function loadQuestion(){
-  const qObj = currentQuestions[currentIndex];
-  document.getElementById('questionTitle').innerText = "題目 "+(currentIndex+1)+"："+qObj.q;
+  const qObj=currentQuestions[currentIndex];
+  document.getElementById("questionTitle").innerText=`題目 ${currentIndex+1}：${qObj.q}`;
+  const drop=document.getElementById("dropBox");
+  drop.innerHTML="請點選答案放入此框";
+  const ansArea=document.getElementById("answersArea");
+  ansArea.innerHTML="";
 
-  const dropBox = document.getElementById('dropBox');
-  const answersArea = document.getElementById('answersArea');
-  dropBox.innerHTML = "拖曳正確答案到這裡";
-  answersArea.innerHTML = "";
-
-  const allPossibleAnswers = [...new Set(questionBank.flatMap(q=>q.a))];
-  let options = [...qObj.a];
-  while(options.length < 25){
-    const r = allPossibleAnswers[Math.floor(Math.random()*allPossibleAnswers.length)];
-    if(!options.includes(r)) options.push(r);
+  const allAns=[...new Set(questionBank.flatMap(x=>x.a))];
+  let opts=[...qObj.a];
+  while(opts.length < 25){
+    const r=allAns[Math.floor(Math.random()*allAns.length)];
+    if(!opts.includes(r)) opts.push(r);
   }
-  options.sort(()=>Math.random()-0.5);
+  opts.sort(()=>Math.random()-0.5);
 
-  options.forEach(ans=>{
-    const el = document.createElement('div');
-    el.className = 'answer';
-    el.innerText = ans;
-    el.draggable = true;
-
-    el.addEventListener('dragstart', e=>{
-      e.dataTransfer.setData('text/plain', ans);
-      e.target.classList.add('dragging');
-    });
-    el.addEventListener('dragend', e=>e.target.classList.remove('dragging'));
-
-    answersArea.appendChild(el);
-  });
-
-  dropBox.addEventListener('dragover', e=>e.preventDefault());
-  dropBox.addEventListener('drop', e=>{
-    e.preventDefault();
-    const data = e.dataTransfer.getData('text/plain');
-    const answers = document.querySelectorAll('#answersArea .answer');
-    const targetAns = [...answers].find(a=>a.innerText === data);
-    if (!targetAns || [...dropBox.children].some(el=>el.innerText===data)) return;
-
-    targetAns.style.display = "none";
-
-    const newItem = document.createElement('div');
-    newItem.className = 'answer';
-    newItem.innerText = data;
-    newItem.addEventListener('click', ()=>{
-      dropBox.removeChild(newItem);
-      targetAns.style.display = "inline-block";
-    });
-    dropBox.appendChild(newItem);
+  opts.forEach(a=>{
+    const el=document.createElement("div");
+    el.className="answer";
+    el.innerText=a;
+    el.onclick=()=>{
+      if(el.dataset.inbox==="true"){
+        el.dataset.inbox="false";
+        el.style.opacity="1";
+        const found=[...drop.children].find(c=>c.innerText===a);
+        if(found) drop.removeChild(found);
+      } else {
+        el.dataset.inbox="true";
+        el.style.opacity="0.3";
+        const clone=document.createElement("div");
+        clone.className="answer";
+        clone.innerText=a;
+        clone.onclick=()=>{
+          drop.removeChild(clone);
+          el.dataset.inbox="false";
+          el.style.opacity="1";
+        };
+        drop.appendChild(clone);
+      }
+    };
+    ansArea.appendChild(el);
   });
 }
 
-// === 確定答案 ===
+// === 判斷答案 ===
 function checkAnswer(){
-  document.getElementById('confirmBtn').disabled = true;
-  const dropBox = document.getElementById('dropBox');
-  const dropped = [...dropBox.children].map(el=>el.innerText);
-  const correct = currentQuestions[currentIndex].a;
+  document.getElementById("confirmBtn").disabled=true;
+  const qObj=currentQuestions[currentIndex];
+  const drop=document.getElementById("dropBox");
+  const chosen=[...drop.children].map(c=>c.innerText);
+  const correct=qObj.a;
 
-  // 計算單一正確答案分數
-  [...dropBox.children].forEach(el=>{
+  totalAnswers += correct.length;
+
+  // 框內：紅綠標示
+  [...drop.children].forEach(el=>{
     if(correct.includes(el.innerText)){
-      el.classList.add('correct');
-      score += 1; // 每個正確答案加一分
+      el.classList.add("correct");
+      correctCount++;
     } else {
-      el.classList.add('wrong');
+      el.classList.add("wrong");
     }
   });
 
-  // 顯示正確答案提示
-  [...document.querySelectorAll('#answersArea .answer')].forEach(el=>{
-    if(correct.includes(el.innerText)) el.classList.add('correct');
+  // 所有正確答案變綠色（框外也標示）
+  const allAnswerEls = document.querySelectorAll("#answersArea .answer");
+  allAnswerEls.forEach(el=>{
+    if(correct.includes(el.innerText)){
+      el.classList.add("correct");
+    }
+    el.classList.add("disabled");
   });
 
+  // 等待3秒後進入下一題
   setTimeout(()=>{
-    document.getElementById('confirmBtn').disabled = false;
     currentIndex++;
-    if(currentIndex < currentQuestions.length){
+    if(currentIndex<currentQuestions.length)
       loadQuestion();
-    } else {
-      showScore();
-    }
-  }, 3000);
+    else showScore();
+    document.getElementById("confirmBtn").disabled=false;
+  },3000);
 }
 
-// === 顯示分數 ===
+// === 結束頁 ===
 function showScore(){
   showPage("score");
-  document.getElementById('scoreValue').innerText = score + " 分";
+  document.getElementById("scoreValue").innerText=`總得分：${correctCount} / ${totalAnswers}`;
+  const acc = totalAnswers > 0 ? ((correctCount/totalAnswers)*100).toFixed(1) : 0;
+  document.getElementById("accuracyFinal").innerText=`正確率：${acc}%`;
 }
 
-// === 事件 ===
-document.getElementById('startBtn').onclick = ()=>{
-  score = 0;
-  currentQuestions = getRandomQuestions();
-  currentIndex = 0;
+// === 控制按鈕 ===
+document.getElementById("startBtn").onclick=()=>{
+  correctCount=0; 
+  totalAnswers=0;
+  currentQuestions=getRandomQuestions();
+  currentIndex=0;
   showPage("game");
   loadQuestion();
 };
-document.getElementById('confirmBtn').onclick = checkAnswer;
-document.getElementById('restartBtn').onclick = ()=>showPage("start");
+document.getElementById("confirmBtn").onclick=checkAnswer;
+document.getElementById("restartBtn").onclick=()=>showPage("start");
 </script>
 </body>
 </html>
