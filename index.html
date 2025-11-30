@@ -18,6 +18,16 @@ body {
 h1 { color: #b22222; font-size: 2.2em; }
 h2 { font-size: 1.8em; color: #8b1a1a; margin-bottom:0; }
 p { font-size: 1.1em; }
+
+/* ✅ 使用者要求的 img 樣式 */
+img {
+  max-width: 90%;
+  height: auto;
+  border-radius: 10px;
+  margin: 20px auto;
+  display: block;
+}
+
 button {
   background: #b22222;
   color: #fff;
@@ -28,21 +38,8 @@ button {
   cursor: pointer;
   margin-top: 15px;
 }
-img {
-  max-width: 90%;
-  height: auto;
-  border-radius: 10px;
-  margin: 20px auto;
-  display: block;
-}
 button:hover { background: #8b1a1a; }
-img {
-  max-width: 90%;
-  height: auto;
-  border-radius: 10px;
-  margin: 20px auto;
-  display: block;
-}
+
 #dropBox {
   width: 85%;
   margin: 15px auto;
@@ -98,6 +95,7 @@ img {
 <!-- 🏠 Start Page -->
 <div id="start" class="page active">
   <h1>五行歸類遊戲</h1>
+  <!-- ✅ 封面圖片（置中顯示） -->
   <img id="img1" src="img1" alt="五行封面圖片">
   <button id="startBtn">開始遊戲</button>
 </div>
@@ -123,7 +121,7 @@ img {
 // === 題庫 (60題) ===
 const questionBank = [
 {q:"五行包括？",a:["木","火","土","金","水"]},
-{q:"情志包括？",a:["恕","善","思","悲","恐"]},
+{q:"情志包括？",a:["恕","喜","思","悲","恐"]},
 {q:"五華包括？",a:["爪","面","唇","毛","髮"]},
 {q:"五主包括？",a:["筋","脈","肉","皮","骨"]},
 {q:"五官包括？",a:["目","舌","口","鼻","耳"]},
@@ -183,6 +181,7 @@ const questionBank = [
 {q:"與「悲」對應？",a:["辛","白","秋","金","肺","大腸","鼻","皮","毛"]},
 {q:"與「恐」對應？",a:["鹹","黑","冬","水","腎","膀胱","耳","骨","髮"]}
 ];
+
 
 // === 狀態 ===
 let currentQuestions=[];
